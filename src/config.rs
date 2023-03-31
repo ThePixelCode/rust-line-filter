@@ -97,11 +97,11 @@ impl Config {
     fn print_help_and_exit() {
         println!("Exec format:
         [command] -> Reads from standard input and prints to standard output
-        [command] -h -> Prints help and exit
+        [command] -h -> Prints this help and exit
         [command] -f [file] -> Reads from [file]
         [command] -i -> Reads from standard input (Default)
-        [command] -o [file] -> Outputs to [file], if -o is not set and -f is set then should output to [file] set in -f,
-                               in other case should output to standard out");
+        [command] -o [file] -> Outputs to [file], if -o is not set and -f is set then outputs to [file] set in -f,
+                               in other case outputs to standard out");
         exit(0);
         
     }
