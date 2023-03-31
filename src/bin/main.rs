@@ -1,4 +1,4 @@
-use rust_line_filter::{config::get_config, get_string_from_file, FileString, LineFiltering};
+use rust_line_filter::{config::get_config, get_string_from_file, string_filter::StringFilter, traits::LineFiltering};
 use std::{fs::OpenOptions, io::Write};
 
 fn main() {
@@ -11,12 +11,12 @@ fn main() {
         Ok(file) => file,
         Err(error) => panic!("{}", error),
     };
-    let file_string = match get_string_from_file(&mut file) {
+    let file_string = match get_string_from_file(&mut file){
         Ok(string) => string,
         Err(_) => todo!(),
     };
 
-    let mut file_string = FileString::new(file_string);
+    let mut file_string = StringFilter::new(file_string);
     file_string.filter();
     let new_string_to_put_in_file = file_string.get_filtered_string();
     file.write_all(new_string_to_put_in_file.as_bytes()).unwrap();
