@@ -18,7 +18,7 @@ impl LineFiltering for StringFilter {
         String::from_iter(lines_iter.map(|x| x.as_str())).trim().to_string()
     }
 
-    fn new(content_to_filter: String) -> Self {
-        StringFilter { lines: content_to_filter.lines().map(|x| String::from(x)).collect() }
+    fn new(string_to_filter: String) -> Self {
+        StringFilter { lines: string_to_filter.lines().map(|x| String::from(x)).collect() }
     }
 }

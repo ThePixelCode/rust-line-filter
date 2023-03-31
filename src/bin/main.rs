@@ -1,24 +1,19 @@
-use rust_line_filter::{config::get_config, get_string_from_file, string_filter::StringFilter, traits::LineFiltering};
-use std::{fs::OpenOptions, io::Write};
+use rust_line_filter::config::Config;
+use std::{env::args, process::exit};
 
 fn main() {
-    let args = std::env::args();
-    let config = match get_config(args){
+    let config = match Config::new(args()) {
         Ok(config) => config,
-        Err(_) => todo!(),
+        Err(error) => {
+            println!("{}", error);
+            exit(1);
+        },
     };
-    let mut file = match OpenOptions::new().read(true).write(true).open(config.file){
-        Ok(file) => file,
-        Err(error) => panic!("{}", error),
-    };
-    let file_string = match get_string_from_file(&mut file){
-        Ok(string) => string,
-        Err(_) => todo!(),
-    };
-
-    let mut file_string = StringFilter::new(file_string);
-    file_string.filter();
-    let new_string_to_put_in_file = file_string.get_filtered_string();
-    file.write_all(new_string_to_put_in_file.as_bytes()).unwrap();
-    file.sync_all().unwrap();
+    match config.process() {
+        Ok(_) => (),
+        Err(error) => {
+            println!("{}", error);
+            exit(2);
+        },
+    }
 }
