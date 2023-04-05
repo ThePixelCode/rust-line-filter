@@ -1,4 +1,4 @@
-use std::{env::Args, fs::{File, OpenOptions}, io::{Read, Write}, process::exit};
+use std::{env::Args, fs::{File, OpenOptions}, io::{Read, Write, stdin}, process::exit};
 
 use crate::{string_filter::StringFilter, traits::LineFiltering};
 
@@ -90,8 +90,17 @@ impl Config {
         Ok(())
     }
 
-    fn get_string_from_stdin() -> String {
-        todo!();
+    fn get_string_from_stdin() -> Result<String, &'static str> {
+        let mut buffer = Vec::new();
+        match stdin().lock().read_to_end(&mut buffer) {
+            Ok(_) => {
+                match String::from_utf8(buffer) {
+                    Ok(string) => Ok(string),
+                    Err(_) => return Err("Invalid characters found"),
+                }
+            },
+            Err(_) => return Err("Something went wrong when reading from standard input"),
+        }
     }
 
     fn print_help_and_exit() {
@@ -111,7 +120,10 @@ impl Config {
             Self::print_help_and_exit();
         }
         if self.stdin {
-            let string_to_filter = Self::get_string_from_stdin();
+            let string_to_filter = match Self::get_string_from_stdin() {
+                Ok(string) => string,
+                Err(error) => return Err(error),
+            };
             let mut filter = StringFilter::new(string_to_filter);
             filter.filter();
             let filtered_string = filter.get_filtered_string();
@@ -126,7 +138,7 @@ impl Config {
                         Err(error) => return Err(error),
                     }
                 },
-                None => print!("{}", filtered_string),
+                None => println!("{}", filtered_string),
             }
             return Ok(())
         }
