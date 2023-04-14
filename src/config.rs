@@ -1,4 +1,4 @@
-use std::{env::Args, fs::{File, OpenOptions}, io::{Read, Write, stdin}, process::exit};
+use std::{env::Args, fs::{File, OpenOptions}, io::{Read, Write, stdin, Seek, SeekFrom::Start}, process::exit};
 
 use crate::{string_filter::StringFilter, traits::LineFiltering};
 
@@ -85,6 +85,14 @@ impl Config {
     }
 
     fn save_string_to_file(string_to_save: String, file: &mut File) -> Result<(), &'static str> {
+        match file.seek(Start(0)) {
+            Ok(_) => (),
+            Err(_) => return Err("Error during seek"),
+        }
+        match file.set_len(0) {
+            Ok(_) => (),
+            Err(_) => return Err("File was not opened as writable"),
+        }
         match file.write_all(string_to_save.as_bytes()) {
             Ok(_) => (),
             Err(_) => return Err("Got an unexpected error"),
