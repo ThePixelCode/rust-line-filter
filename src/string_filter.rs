@@ -5,7 +5,10 @@ pub struct StringFilter {
 }
 
 impl LineFiltering for StringFilter {
-    fn filter(&mut self) {
+    fn filter(&mut self, order: bool) {
+        if order {
+            self.lines.sort()
+        }
         self.lines.dedup()
     }
 

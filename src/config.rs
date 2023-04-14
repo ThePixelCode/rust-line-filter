@@ -6,7 +6,8 @@ pub struct Config {
     help: bool,
     file: Option<String>,
     stdin: bool,
-    output: Option<String>
+    output: Option<String>,
+    order: bool
 }
 
 /*
@@ -24,6 +25,7 @@ impl Config {
         let mut file: Option<String> = None;
         let mut stdin = false;
         let mut output: Option<String> = None;
+        let mut order = false;
         loop {
             let arg = match args.next() {
                 Some(arg) => arg,
@@ -53,6 +55,9 @@ impl Config {
                 output = Some(file_arg);
                 continue
             }
+            if arg == "-O" {
+                order = true;
+            }
         }
         if file.is_some() && stdin {
             return Err("Incompatible arguments found");
@@ -64,7 +69,8 @@ impl Config {
             file,
             help,
             stdin,
-            output
+            output,
+            order
         })
     }
 
@@ -107,6 +113,7 @@ impl Config {
         println!("Exec format:
         [command] -> Reads from standard input and prints to standard output
         [command] -h -> Prints this help and exit
+        [command] -O -> Orders the text before filtering
         [command] -f [file] -> Reads from [file]
         [command] -i -> Reads from standard input (Default)
         [command] -o [file] -> Outputs to [file], if -o is not set and -f is set then outputs to [file] set in -f,
@@ -125,7 +132,7 @@ impl Config {
                 Err(error) => return Err(error),
             };
             let mut filter = StringFilter::new(string_to_filter);
-            filter.filter();
+            filter.filter(self.order);
             let filtered_string = filter.get_filtered_string();
             match self.output {
                 Some(path) => {
@@ -159,7 +166,7 @@ impl Config {
                             Err(error) => return Err(error),
                         };
                         let mut filter = StringFilter::new(string_to_filter);
-                        filter.filter();
+                        filter.filter(self.order);
                         let filtered_string = filter.get_filtered_string();
                         match Self::save_string_to_file(filtered_string, &mut output_file) {
                             Ok(_) => (),
@@ -176,7 +183,7 @@ impl Config {
                             Err(error) => return Err(error),
                         };
                         let mut filter = StringFilter::new(string_to_filter);
-                        filter.filter();
+                        filter.filter(self.order);
                         let filtered_string = filter.get_filtered_string();
                         match Self::save_string_to_file(filtered_string, &mut file) {
                             Ok(_) => (),
