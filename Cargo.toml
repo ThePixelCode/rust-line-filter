@@ -1,6 +1,6 @@
 [package]
 name = "rust-line-filter"
-version = "1.1.0"
+version = "1.1.1"
 edition = "2021"
 authors = ["ThePixelCode <thepixelcode@duck.com>"]
 description = "A command line utility to filter repeated lines"

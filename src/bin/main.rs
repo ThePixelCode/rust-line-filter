@@ -1,4 +1,5 @@
 use rust_line_filter::config::Config;
+use rust_line_filter::process;
 use std::{env::args, process::exit};
 
 fn main() {
@@ -9,7 +10,7 @@ fn main() {
             exit(1);
         },
     };
-    match config.process() {
+    match process(config) {
         Ok(_) => (),
         Err(error) => {
             println!("{}", error);
